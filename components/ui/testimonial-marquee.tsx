@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { X, Quote } from "lucide-react";
@@ -179,19 +180,19 @@ export function TestimonialMarquee({ items }: { items: Testimonial[] }) {
             ))}
           </div>
         ) : (
-          <div className="relative z-10 flex flex-col items-center gap-6 overflow-hidden py-12">
+          <div className="tm-viewport relative z-10 flex flex-col items-center gap-6 overflow-hidden py-12">
             {rows.map((row, rowIndex) => (
-              <motion.div
+              <div
                 key={rowIndex}
-                className="flex min-w-max items-center gap-5"
-                animate={{ x: rowIndex % 2 === 0 ? ["0%", "-50%"] : ["-50%", "0%"] }}
-                transition={{
-                  duration: 46 + rowIndex * 6,
-                  repeat: Infinity,
-                  ease: "linear",
-                }}
+                className="tm-row flex min-w-max items-center gap-5"
+                style={
+                  {
+                    "--tm-duration": `${46 + rowIndex * 6}s`,
+                    "--tm-direction": rowIndex % 2 === 0 ? "normal" : "reverse",
+                  } as React.CSSProperties
+                }
               >
-                {/* Duplicated once — the track translates 50%, which is what makes
+                {/* Duplicated once — the track translates -50%, which is what makes
                     the loop seamless regardless of how many items there are. */}
                 {[...row, ...row].map((t, i) => (
                   <Capsule
@@ -200,7 +201,7 @@ export function TestimonialMarquee({ items }: { items: Testimonial[] }) {
                     onClick={() => setSelected(t)}
                   />
                 ))}
-              </motion.div>
+              </div>
             ))}
           </div>
         )}
@@ -225,7 +226,12 @@ export function TestimonialMarquee({ items }: { items: Testimonial[] }) {
             <motion.div
               initial={{ opacity: 0, scale: 0.94, y: 18 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.97, y: 8, transition: { duration: 0.15 } }}
+              exit={{
+                opacity: 0,
+                scale: 0.97,
+                y: 8,
+                transition: { duration: 0.15 },
+              }}
               transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
               className="relative z-10 w-full max-w-xl rounded-sm border border-line-strong bg-surface p-8 shadow-2xl shadow-black/50 sm:p-12"
             >
@@ -251,7 +257,11 @@ export function TestimonialMarquee({ items }: { items: Testimonial[] }) {
               </blockquote>
 
               <figcaption className="mt-8 flex items-center gap-4 border-t border-line pt-6">
-                <Avatar person={selected} size={44} className="ring-1 ring-line" />
+                <Avatar
+                  person={selected}
+                  size={44}
+                  className="ring-1 ring-line"
+                />
                 <span className="flex flex-col">
                   <span className="text-sm font-medium text-fg">
                     {selected.author}

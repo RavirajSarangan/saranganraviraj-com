@@ -376,6 +376,21 @@
   animation: marquee-x 38s linear infinite;
 }
 
+/* Testimonial rows. Duration and direction come from inline custom properties so
+   each row can differ without a class per row. */
+.tm-row {
+  animation: marquee-x var(--tm-duration, 46s) linear infinite;
+  animation-direction: var(--tm-direction, normal);
+}
+
+/* A perpetually moving click target is hard to hit — for everyone, and much more so
+   with a motor impairment. Pausing on hover or keyboard focus makes the capsules
+   actually operable. */
+.tm-viewport:hover .tm-row,
+.tm-viewport:focus-within .tm-row {
+  animation-play-state: paused;
+}
+
 /* Underline that draws in from the left on hover */
 .link-underline {
   background-image: linear-gradient(currentColor, currentColor);
