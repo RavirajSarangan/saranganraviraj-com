@@ -4,7 +4,7 @@ Personal portfolio for Sarangan Raviraj, Software Engineer & Designer. Remote-fi
 working worldwide.
 
 Next.js 16 (App Router) · Tailwind CSS v4 · GSAP + Lenis · OGL (WebGL) ·
-next-themes · TypeScript. All 30 public routes are statically prerendered.
+next-themes · TypeScript. Every public route is statically prerendered.
 
 ```bash
 npm run dev     # http://localhost:3000
@@ -51,6 +51,22 @@ on paper.
 > sleeve — it stays a dark duotone in both themes, and its inner text is set with
 > explicit light values rather than `text-fg`. Using a theme-reactive colour there
 > turns the type dark-on-dark in light mode.
+
+## Icons
+
+`lucide-react`, mapped in [`components/ui/tag-icon.tsx`](components/ui/tag-icon.tsx).
+Keys match case-insensitively against tag text, **longest key first**, so
+"Adobe Photoshop" beats a bare "Adobe". An unmatched tag renders **no icon** rather
+than a generic fallback — a wrong icon implies a category that is not there.
+Current coverage: 32/34 skill and stack tags.
+
+`renderTagIcon()` is a plain function returning an element, not a component.
+Selecting a component *reference* during render trips
+`react-hooks/static-components`, and the rule is right: React cannot reconcile a
+component whose identity changes between renders.
+
+Note lucide has dropped its brand marks — there is no `Figma` or `Framer` export, so
+those map to neutral glyphs.
 
 ## Animation stack
 
@@ -136,7 +152,7 @@ worse than leaving the slot open.
 
 | What | Why | How to fill it |
 |---|---|---|
-| **Testimonials** | The old site's quotes came from a purchased template and credited a "Daniel" who was never a client. | Add `{ quote, author, title }` entries to `testimonials` in `content/site.ts`. The section appears automatically. |
+| **Testimonials** | The old site's quotes came from a purchased template and credited a "Daniel" who was never a client. | Add `{ id, quote, author, title }` entries to `testimonials` in `content/site.ts`. The marquee appears automatically; avatars fall back to a generated initials plate, or drop a headshot at `public/testimonials/<id>.webp` and set `image`. |
 | **Project screenshots** | All original imagery is hosted on `framerusercontent.com` with no local copies. | Drop a file at `public/work/<slug>.webp` and set `image: "/work/<slug>.webp"` on that project. It replaces the generated plate with no other change. |
 | **Portrait** | No photo of Sarangan existed in any local project. | Add `public/portrait.webp` and set `about.portrait`. |
 | **Behance callout** | The CV cites "20+ UI case studies on Behance" but gives no URL, so the callout on `/work` stays hidden rather than shipping a guessed link. | Set `behance.url` in `content/site.ts`. |
@@ -205,7 +221,8 @@ one-line change per page; the rendering components are unaffected.
 
 ## Verified
 
-- `npm run build` and `npm run lint` clean; 21 routes prerendered.
+- `npm run build`, `npm run lint` and `npm run typecheck` clean; 30 pages prerendered,
+  none dynamic.
 - 28 width×route combinations (360 / 768 / 1440 / 2560 px × 7 routes): no page errors,
   no console errors, no horizontal overflow.
 - **Reduced motion:** canvas never mounts, Lenis never constructs, marquee frozen at
@@ -216,6 +233,19 @@ one-line change per page; the rendering components are unaffected.
 - **JS disabled:** name, tagline, projects and stats all present in the served HTML.
 - Keyboard: skip link is the first tab stop; visible gold focus ring throughout.
 - OG image served byte-identical to the build artifact.
+
+### Testimonial marquee
+
+[`components/ui/testimonial-marquee.tsx`](components/ui/testimonial-marquee.tsx),
+adapted from a supplied component. Verified: rows animate, **pause on hover and on
+keyboard focus** (a perpetually moving click target is hard to hit, and much more so
+with a motor impairment), capsule opens a dialog with `role`/`aria-modal`/`aria-label`,
+focus moves to the close button and returns on close, Escape closes, body scroll locks
+and unlocks. Under reduced motion it renders a static grid with zero animated rows.
+
+Rows are CSS-animated rather than JS-driven, so `animation-play-state: paused` on
+`:hover`/`:focus-within` does the pausing for free and the existing global
+reduced-motion block applies automatically.
 
 ### Structured data & feed
 

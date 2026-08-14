@@ -326,7 +326,8 @@ export const projects: Project[] = [
     role: ["Product design", "UI/UX", "Prototyping"],
     approach:
       "I am designing the ordering flow to stay short while giving each restaurant real visual space, and tuning transitions so movement between browse, dish and cart feels continuous rather than like page loads.",
-    outcome: "", // TODO: fill in once shipped
+    outcome:
+      "Still in design — the ordering flow and its transitions are being prototyped. Nothing is released yet.",
     stack: ["Mobile", "UI/UX", "Prototyping"],
     duotone: ["#5a2a0f", "#0a0a0b"],
   },
@@ -345,7 +346,8 @@ export const projects: Project[] = [
     role: ["Product design", "UI/UX", "Systems design"],
     approach:
       "Matching is modelled on values and long-term compatibility rather than engagement metrics. Every profile field is designed with a visibility decision attached to it, so users control disclosure at the point they enter information instead of hunting for it later.",
-    outcome: "", // TODO: fill in once shipped
+    outcome:
+      "Still in design. The verification and privacy model is being settled first, since it is what the platform's credibility rests on. Nothing is released yet.",
     stack: ["Web", "Product", "UI/UX"],
     duotone: ["#2a2a5a", "#0a0a0b"],
   },
@@ -450,12 +452,7 @@ export type Testimonial = {
   image?: string;
 };
 
-export const testimonials: Testimonial[] = [
-  { id: "t1", quote: "TEMP verification quote one, long enough to wrap across a couple of lines in the dialog.", author: "Ada Lovelace", title: "Founder, Analytical Co." },
-  { id: "t2", quote: "TEMP verification quote two.", author: "Grace Hopper", title: "CTO, Compiler Ltd" },
-  { id: "t3", quote: "TEMP verification quote three.", author: "Alan Turing", title: "Director, Bombe" },
-  { id: "t4", quote: "TEMP verification quote four.", author: "Radia Perlman", title: "Architect, Spanning" },
-];
+export const testimonials: Testimonial[] = [];
 
 /* ------------------------------------------------------------------ */
 /* About                                                               */

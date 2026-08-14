@@ -130,7 +130,14 @@ export default async function ProjectPage({ params }: Params) {
           <div className="lg:col-span-7 lg:col-start-6">
             <Section title="Overview" body={project.overview} />
             <Section title="Approach" body={project.approach} />
-            <Section title="Outcome" body={project.outcome} />
+            {/*
+              An unshipped project has no outcome yet, so claiming one would be
+              fiction. It has a current state instead — headed honestly.
+            */}
+            <Section
+              title={project.status === "In progress" ? "Where it stands" : "Outcome"}
+              body={project.outcome}
+            />
           </div>
         </div>
 

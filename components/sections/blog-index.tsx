@@ -30,6 +30,7 @@ const dateFormat = new Intl.DateTimeFormat("en-GB", {
 
 export function BlogIndex({ posts }: { posts: Post[] }) {
   const [active, setActive] = useState<number | null>(null);
+  const [category, setCategory] = useState<string>("All");
   const reduced = useReducedMotion();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -45,8 +46,50 @@ export function BlogIndex({ posts }: { posts: Post[] }) {
     y.set(e.clientY - rect.top);
   }
 
+  // Every post currently sits in one category, so a filter with a single option
+  // would be a control that does nothing — it appears only once there are two.
+  const categories = [...new Set(posts.map((p) => p.category))];
+  const showFilter = categories.length > 1;
+  const visible =
+    category === "All" ? posts : posts.filter((p) => p.category === category);
+
   return (
     <section className="shell pt-12 pb-24 sm:pt-16 sm:pb-32">
+      {showFilter && (
+        <div
+          role="group"
+          aria-label="Filter by category"
+          className="mb-10 flex flex-wrap gap-2"
+        >
+          {["All", ...categories].map((c) => {
+            const isActive = c === category;
+            return (
+              <button
+                key={c}
+                type="button"
+                onClick={() => {
+                  setCategory(c);
+                  setActive(null);
+                }}
+                aria-pressed={isActive}
+                className={`label rounded-full border px-4 py-2.5 transition-colors duration-500 ${
+                  isActive
+                    ? "border-accent text-accent"
+                    : "border-line text-muted hover:border-line-strong hover:text-fg"
+                }`}
+              >
+                {c}
+                {c !== "All" && (
+                  <span className="ml-2 opacity-60">
+                    {posts.filter((p) => p.category === c).length}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       <div
         ref={containerRef}
         onMouseMove={handleMove}
@@ -66,7 +109,7 @@ export function BlogIndex({ posts }: { posts: Post[] }) {
             >
               <div className="-translate-x-1/2 -translate-y-1/2">
                 <PostPlate
-                  post={posts[active]}
+                  post={visible[active]}
                   className="aspect-[4/3] w-[24rem] rounded-sm shadow-2xl shadow-black/50"
                   sizes="24rem"
                 />
@@ -76,7 +119,7 @@ export function BlogIndex({ posts }: { posts: Post[] }) {
         </AnimatePresence>
 
         <RevealGroup className="border-t border-line" each={0.05}>
-          {posts.map((post, i) => (
+          {visible.map((post, i) => (
             <RevealItem key={post.slug}>
               <Link
                 href={`/blog/${post.slug}`}

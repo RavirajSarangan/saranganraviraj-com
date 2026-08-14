@@ -4,7 +4,10 @@ import { Nav } from "@/components/site/nav";
 import { Footer } from "@/components/site/footer";
 import { SmoothScroll } from "@/lib/lenis";
 import { Theme } from "@/lib/theme";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { PersonJsonLd, WebsiteJsonLd } from "@/components/seo/json-ld";
+import { Preloader } from "@/components/site/preloader";
 import { site } from "@/content/site";
 import "./globals.css";
 
@@ -102,12 +105,21 @@ export default function RootLayout({
         <PersonJsonLd />
         <WebsiteJsonLd />
         <Theme>
+          {/* Overlay only — never gates the content underneath it */}
+          <Preloader />
           <SmoothScroll>
             <Nav />
             <main id="main">{children}</main>
             <Footer />
           </SmoothScroll>
         </Theme>
+        {/*
+          Outside <Theme> deliberately: both are invisible script-injectors with
+          no styling, so they gain nothing from the provider and stay clear of
+          the smooth-scroll subtree. Each no-ops off Vercel.
+        */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

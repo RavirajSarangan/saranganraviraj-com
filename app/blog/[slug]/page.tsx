@@ -5,6 +5,10 @@ import { ContactCta } from "@/components/sections/contact-cta";
 import { MaskText, Reveal, RuleLine } from "@/components/ui/reveal";
 import { PostPlate } from "@/components/ui/post-plate";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo/json-ld";
+import { ReadingProgress } from "@/components/blog/reading-progress";
+import { TableOfContents } from "@/components/blog/table-of-contents";
+import { RelatedPosts } from "@/components/blog/related-posts";
+import { headingId } from "@/lib/slug";
 import { getPost, posts } from "@/content/posts";
 import { site } from "@/content/site";
 
@@ -45,9 +49,13 @@ export default async function PostPage({ params }: Params) {
 
   const index = posts.findIndex((p) => p.slug === slug);
   const next = posts[(index + 1) % posts.length];
+  const headings = post.body
+    .filter((b) => b.type === "heading")
+    .map((b) => b.text);
 
   return (
     <>
+      <ReadingProgress />
       <ArticleJsonLd post={post} />
       <BreadcrumbJsonLd
         trail={[
@@ -98,13 +106,20 @@ export default async function PostPage({ params }: Params) {
         </div>
 
         {/* Body — measure capped near 68ch, the readable range for long prose */}
-        <div className="shell mt-14 sm:mt-20">
-          <div className="max-w-[68ch]">
+        <div className="shell mt-14 grid gap-12 sm:mt-20 lg:grid-cols-12 lg:gap-16">
+          <aside className="lg:col-span-3">
+            <TableOfContents headings={headings} />
+          </aside>
+
+          <div className="max-w-[68ch] lg:col-span-8 lg:col-start-5">
             {post.body.map((block, i) => {
               if (block.type === "heading") {
                 return (
                   <Reveal key={i}>
-                    <h2 className="font-display mt-14 mb-5 text-[clamp(1.5rem,3vw,2.125rem)] leading-[1.1] tracking-[-0.02em] text-fg first:mt-0">
+                    <h2
+                      id={headingId(block.text)}
+                      className="font-display mt-14 mb-5 scroll-mt-28 text-[clamp(1.5rem,3vw,2.125rem)] leading-[1.1] tracking-[-0.02em] text-fg first:mt-0"
+                    >
                       {block.text}
                     </h2>
                   </Reveal>
@@ -120,6 +135,8 @@ export default async function PostPage({ params }: Params) {
             })}
           </div>
         </div>
+
+        <RelatedPosts current={post} />
 
         <nav aria-label="Next post" className="shell mt-24 sm:mt-32">
           <RuleLine />
