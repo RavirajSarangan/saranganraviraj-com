@@ -1,0 +1,419 @@
+@import "tailwindcss";
+
+/* ============================================================
+   THEME TOKENS
+   ------------------------------------------------------------
+   Two palettes: Editorial Noir (dark) and Editorial Ivory (light).
+   They are counterparts, not inversions — ivory is warm paper with a
+   darkened gold, not "dark mode with the lightness flipped".
+
+   `@theme inline` is what makes runtime theming work: utilities compile
+   to `var(--ink)` rather than baking the hex in, so redefining the raw
+   variables per theme below re-colours every utility.
+   ============================================================ */
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-deep: var(--ink-deep);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-dim: var(--accent-dim);
+
+  --font-display: var(--font-instrument-serif), Georgia, serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+
+  --shell-max: 1320px;
+}
+
+/* ------------------------------------------------------------
+   Palette values live here exactly once, prefixed by palette name.
+   The blocks below only ever re-point the semantic tokens at one set
+   or the other, so the two palettes cannot drift apart.
+   ------------------------------------------------------------ */
+:root {
+  /* Editorial Ivory — warm paper, darkened gold */
+  --ivory-ink: #f7f4ee;
+  --ivory-ink-deep: #efebe2;
+  --ivory-surface: #fffdf9;
+  --ivory-surface-2: #f2eee6;
+  --ivory-line: rgba(24, 20, 15, 0.13);
+  --ivory-line-strong: rgba(24, 20, 15, 0.24);
+  --ivory-fg: #17140f;
+  --ivory-muted: #635c52;
+  --ivory-faint: #9a9288;
+  --ivory-accent: #7a5c12;
+  --ivory-accent-dim: rgba(122, 92, 18, 0.12);
+  --ivory-grain-opacity: 0.028;
+  --ivory-grain-blend: multiply;
+  --ivory-shader-base: #f7f4ee;
+  --ivory-shader-mid: #ece3d2;
+  --ivory-shader-warm: #ddc9a4;
+  --ivory-shader-accent: #b8933c;
+  --ivory-shader-accent-strength: 0.3;
+  --ivory-hero-scrim: linear-gradient(
+    180deg,
+    rgba(247, 244, 238, 0.5) 0%,
+    rgba(247, 244, 238, 0.24) 34%,
+    rgba(247, 244, 238, 0.6) 78%,
+    rgba(247, 244, 238, 0.94) 100%
+  );
+  --ivory-hero-fallback:
+    radial-gradient(
+      120% 85% at 50% 0%,
+      rgba(184, 147, 60, 0.2) 0%,
+      rgba(221, 201, 164, 0.16) 32%,
+      rgba(247, 244, 238, 0) 68%
+    ),
+    radial-gradient(
+      90% 60% at 18% 12%,
+      rgba(184, 147, 60, 0.13) 0%,
+      transparent 60%
+    ),
+    #f7f4ee;
+
+  /* Editorial Noir — near-black, warm gold */
+  --noir-ink: #0a0a0b;
+  --noir-ink-deep: #060607;
+  --noir-surface: #131315;
+  --noir-surface-2: #1a1a1d;
+  --noir-line: rgba(237, 234, 228, 0.09);
+  --noir-line-strong: rgba(237, 234, 228, 0.18);
+  --noir-fg: #edeae4;
+  --noir-muted: #8c8880;
+  --noir-faint: #56534d;
+  --noir-accent: #c8a24a;
+  --noir-accent-dim: rgba(200, 162, 74, 0.14);
+  --noir-grain-opacity: 0.035;
+  --noir-grain-blend: normal;
+  --noir-shader-base: #0a0a0b;
+  --noir-shader-mid: #191612;
+  --noir-shader-warm: #3c2912;
+  --noir-shader-accent: #c8a24a;
+  --noir-shader-accent-strength: 0.22;
+  --noir-hero-scrim: linear-gradient(
+    180deg,
+    rgba(10, 10, 11, 0.55) 0%,
+    rgba(10, 10, 11, 0.3) 34%,
+    rgba(10, 10, 11, 0.62) 78%,
+    rgba(10, 10, 11, 0.92) 100%
+  );
+  --noir-hero-fallback:
+    radial-gradient(
+      120% 85% at 50% 0%,
+      rgba(200, 162, 74, 0.16) 0%,
+      rgba(76, 53, 25, 0.1) 32%,
+      rgba(10, 10, 11, 0) 68%
+    ),
+    radial-gradient(
+      90% 60% at 18% 12%,
+      rgba(200, 162, 74, 0.09) 0%,
+      transparent 60%
+    ),
+    #0a0a0b;
+}
+
+/* Ivory is the no-preference default. */
+:root {
+  --ink: var(--ivory-ink);
+  --ink-deep: var(--ivory-ink-deep);
+  --surface: var(--ivory-surface);
+  --surface-2: var(--ivory-surface-2);
+  --line: var(--ivory-line);
+  --line-strong: var(--ivory-line-strong);
+  --fg: var(--ivory-fg);
+  --muted: var(--ivory-muted);
+  --faint: var(--ivory-faint);
+  --accent: var(--ivory-accent);
+  --accent-dim: var(--ivory-accent-dim);
+  --grain-opacity: var(--ivory-grain-opacity);
+  --grain-blend: var(--ivory-grain-blend);
+  --shader-base: var(--ivory-shader-base);
+  --shader-mid: var(--ivory-shader-mid);
+  --shader-warm: var(--ivory-shader-warm);
+  --shader-accent: var(--ivory-shader-accent);
+  --shader-accent-strength: var(--ivory-shader-accent-strength);
+  --hero-scrim: var(--ivory-hero-scrim);
+  --hero-fallback: var(--ivory-hero-fallback);
+  color-scheme: light;
+}
+
+/*
+  Dark from CSS alone when the OS asks for it and the visitor has not explicitly
+  chosen light. This matters for two reasons beyond taste:
+   1. It renders correctly before (and entirely without) JavaScript, so a
+      dark-OS visitor never sees a pale first frame while the theme script runs.
+   2. `:not([data-theme="light"])` keeps an explicit light choice winning.
+*/
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: var(--noir-ink);
+    --ink-deep: var(--noir-ink-deep);
+    --surface: var(--noir-surface);
+    --surface-2: var(--noir-surface-2);
+    --line: var(--noir-line);
+    --line-strong: var(--noir-line-strong);
+    --fg: var(--noir-fg);
+    --muted: var(--noir-muted);
+    --faint: var(--noir-faint);
+    --accent: var(--noir-accent);
+    --accent-dim: var(--noir-accent-dim);
+    --grain-opacity: var(--noir-grain-opacity);
+    --grain-blend: var(--noir-grain-blend);
+    --shader-base: var(--noir-shader-base);
+    --shader-mid: var(--noir-shader-mid);
+    --shader-warm: var(--noir-shader-warm);
+    --shader-accent: var(--noir-shader-accent);
+    --shader-accent-strength: var(--noir-shader-accent-strength);
+    --hero-scrim: var(--noir-hero-scrim);
+    --hero-fallback: var(--noir-hero-fallback);
+    color-scheme: dark;
+  }
+}
+
+/* An explicit choice always wins, in both directions. */
+[data-theme="dark"] {
+  --ink: var(--noir-ink);
+  --ink-deep: var(--noir-ink-deep);
+  --surface: var(--noir-surface);
+  --surface-2: var(--noir-surface-2);
+  --line: var(--noir-line);
+  --line-strong: var(--noir-line-strong);
+  --fg: var(--noir-fg);
+  --muted: var(--noir-muted);
+  --faint: var(--noir-faint);
+  --accent: var(--noir-accent);
+  --accent-dim: var(--noir-accent-dim);
+  --grain-opacity: var(--noir-grain-opacity);
+  --grain-blend: var(--noir-grain-blend);
+  --shader-base: var(--noir-shader-base);
+  --shader-mid: var(--noir-shader-mid);
+  --shader-warm: var(--noir-shader-warm);
+  --shader-accent: var(--noir-shader-accent);
+  --shader-accent-strength: var(--noir-shader-accent-strength);
+  --hero-scrim: var(--noir-hero-scrim);
+  --hero-fallback: var(--noir-hero-fallback);
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --ink: var(--ivory-ink);
+  --ink-deep: var(--ivory-ink-deep);
+  --surface: var(--ivory-surface);
+  --surface-2: var(--ivory-surface-2);
+  --line: var(--ivory-line);
+  --line-strong: var(--ivory-line-strong);
+  --fg: var(--ivory-fg);
+  --muted: var(--ivory-muted);
+  --faint: var(--ivory-faint);
+  --accent: var(--ivory-accent);
+  --accent-dim: var(--ivory-accent-dim);
+  --grain-opacity: var(--ivory-grain-opacity);
+  --grain-blend: var(--ivory-grain-blend);
+  --shader-base: var(--ivory-shader-base);
+  --shader-mid: var(--ivory-shader-mid);
+  --shader-warm: var(--ivory-shader-warm);
+  --shader-accent: var(--ivory-shader-accent);
+  --shader-accent-strength: var(--ivory-shader-accent-strength);
+  --hero-scrim: var(--ivory-hero-scrim);
+  --hero-fallback: var(--ivory-hero-fallback);
+  color-scheme: light;
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
+@layer base {
+  * {
+    border-color: var(--color-line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    background-color: var(--color-ink);
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv01";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-accent);
+    color: var(--color-ink);
+  }
+
+  /* Focus: visible, on-brand, never removed */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .font-display {
+    font-feature-settings: "liga", "dlig";
+  }
+}
+
+/* ============================================================
+   Utilities
+   ============================================================ */
+@utility shell {
+  width: 100%;
+  max-width: var(--shell-max);
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+
+  @media (width >= 48rem) {
+    padding-inline: 2.5rem;
+  }
+  @media (width >= 80rem) {
+    padding-inline: 4rem;
+  }
+}
+
+/* Uppercase mono metadata — the detail that makes this read art-directed */
+@utility label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* Fluid display sizing: scales continuously instead of stepping at breakpoints */
+@utility display-xl {
+  font-family: var(--font-display);
+  font-size: clamp(2.875rem, 10vw, 9rem);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  font-weight: 400;
+}
+
+@utility display-lg {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 6.5vw, 5.25rem);
+  line-height: 0.94;
+  letter-spacing: -0.025em;
+  font-weight: 400;
+}
+
+@utility display-md {
+  font-family: var(--font-display);
+  font-size: clamp(1.875rem, 3.6vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-weight: 400;
+}
+
+@utility rule {
+  border-top: 1px solid var(--color-line);
+}
+
+/* ============================================================
+   Grain overlay — atmosphere without an image request
+   ============================================================ */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  mix-blend-mode: var(--grain-blend);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 6s steps(6) infinite;
+}
+
+@keyframes grain-shift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  16% {
+    transform: translate(-2%, 1%);
+  }
+  33% {
+    transform: translate(1%, -2%);
+  }
+  50% {
+    transform: translate(-1%, 2%);
+  }
+  66% {
+    transform: translate(2%, 1%);
+  }
+  83% {
+    transform: translate(-2%, -1%);
+  }
+}
+
+/* Marquee */
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee-x 38s linear infinite;
+}
+
+/* Underline that draws in from the left on hover */
+.link-underline {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.45s var(--ease-out-expo);
+}
+.link-underline:hover,
+.link-underline:focus-visible {
+  background-size: 100% 1px;
+}
+
+/* ============================================================
+   Reduced motion — collapse everything to an instant state
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .grain::after {
+    animation: none;
+  }
+
+  .marquee-track {
+    animation: none;
+  }
+
+  .link-underline {
+    background-size: 100% 1px;
+  }
+}
