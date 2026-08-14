@@ -36,7 +36,10 @@ export function Services({ index = "02" }: { index?: string }) {
                 {service.tags.map((tag) => (
                   <li
                     key={tag}
-                    className="label flex items-center gap-2 rounded-full border border-line px-3.5 py-2 text-fg/55 transition-colors duration-500 group-hover:border-line-strong group-hover:text-fg/80"
+                    // text-fg/55 measured 3.94:1 on ivory — below AA for 11px text.
+                    // `text-muted` is the token already tuned for this: 6.01:1 light,
+                    // 5.61:1 dark.
+                    className="label flex items-center gap-2 rounded-full border border-line px-3.5 py-2 text-muted transition-colors duration-500 group-hover:border-line-strong group-hover:text-fg"
                   >
                     {renderTagIcon(tag)}
                     {tag}

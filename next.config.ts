@@ -26,6 +26,26 @@ const nextConfig: NextConfig = {
    * any future plain-HTTP subdomain. Worth strengthening deliberately, not by
    * default.
    */
+  /**
+   * Canonicalise on www.
+   *
+   * Both hosts resolve, and every canonical tag, the sitemap, robots.txt and the RSS
+   * self-link already say `www` — without this the apex serves byte-identical content
+   * under a second hostname, which is duplicate content and splits any link equity.
+   *
+   * Host-based rather than a Vercel domain setting so it travels with the codebase.
+   */
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "saranganraviraj.com" }],
+        destination: "https://www.saranganraviraj.com/:path*",
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {
