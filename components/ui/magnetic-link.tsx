@@ -11,20 +11,24 @@ import { useRef, type ReactNode, type MouseEvent } from "react";
  */
 export function MagneticLink({
   href,
+  onClick,
   children,
   className = "",
   variant = "solid",
   external = false,
   strength = 0.28,
 }: {
-  href: string;
+  /** Omit when passing `onClick` — an action renders a <button>, not an anchor. */
+  href?: string;
+  /** Turns the control into a real <button>. Used by the error boundary's retry. */
+  onClick?: () => void;
   children: ReactNode;
   className?: string;
   variant?: "solid" | "ghost";
   external?: boolean;
   strength?: number;
 }) {
-  const ref = useRef<HTMLAnchorElement>(null);
+  const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
 
   const x = useMotionValue(0);
@@ -32,7 +36,7 @@ export function MagneticLink({
   const springX = useSpring(x, { stiffness: 180, damping: 16, mass: 0.35 });
   const springY = useSpring(y, { stiffness: 180, damping: 16, mass: 0.35 });
 
-  function handleMove(e: MouseEvent<HTMLAnchorElement>) {
+  function handleMove(e: MouseEvent<HTMLElement>) {
     if (reduced || !ref.current) return;
     const rect = ref.current.getBoundingClientRect();
     x.set((e.clientX - (rect.left + rect.width / 2)) * strength);
@@ -70,16 +74,29 @@ export function MagneticLink({
 
   return (
     <motion.div style={{ x: springX, y: springY }} className="inline-block">
-      <Link
-        ref={ref}
-        href={href}
-        onMouseMove={handleMove}
-        onMouseLeave={reset}
-        className={`${base} ${styles} ${className}`}
-        {...props}
-      >
-        {inner}
-      </Link>
+      {onClick ? (
+        <button
+          ref={ref as React.RefObject<HTMLButtonElement>}
+          type="button"
+          onClick={onClick}
+          onMouseMove={handleMove}
+          onMouseLeave={reset}
+          className={`${base} ${styles} ${className}`}
+        >
+          {inner}
+        </button>
+      ) : (
+        <Link
+          ref={ref as React.RefObject<HTMLAnchorElement>}
+          href={href ?? "/"}
+          onMouseMove={handleMove}
+          onMouseLeave={reset}
+          className={`${base} ${styles} ${className}`}
+          {...props}
+        >
+          {inner}
+        </Link>
+      )}
     </motion.div>
   );
 }

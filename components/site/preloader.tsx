@@ -96,6 +96,7 @@ export function Preloader() {
       ref={rootRef}
       // Decorative: the real page is already rendered underneath this.
       aria-hidden
+      data-preloader
       className="fixed inset-0 z-[100] flex flex-col justify-end bg-ink"
     >
       <div data-intro-content className="shell pb-14 sm:pb-20">

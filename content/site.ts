@@ -780,6 +780,16 @@ export const certifications: Certification[] = [
   },
 ];
 
+/**
+ * Booking. Left empty deliberately: `@calcom/embed-react` pulls in a third-party
+ * script, and installing it to render nothing would be dead weight. Set `calLink`
+ * (e.g. "sarangan/30min") and the embed gets wired then.
+ */
+export const booking = {
+  calLink: "", // TODO: Cal.com username/event
+  label: "Book a call",
+} as const;
+
 /** Downloadable CV. Kept in `public/` so it is a plain static asset. */
 export const resume = {
   href: "/Sarangan-Raviraj-CV.pdf",

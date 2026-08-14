@@ -138,9 +138,15 @@ A few behaviours worth knowing:
 - **Section numbers are computed, not written.** `app/page.tsx` derives the
   `01 / 02 / 03 …` sequence from which sections actually render, so hiding one
   never leaves a gap in the numbering.
-- **Case study sections with empty strings are skipped.** Two in-progress
-  projects have `outcome: ""` and simply omit that heading rather than showing
-  an empty one.
+- **Case study sections with empty strings are skipped.** Four projects
+  (`mindmap-ai`, `presenceiq`, `aix-lens`, `flashtech`) still have
+  `outcome: ""` and omit that heading rather than showing an empty one — so
+  those four case studies currently end after "Approach". Filling them is the
+  single highest-value content edit left.
+- **The third section is headed by status.** A project with
+  `status: "In progress"` has no outcome yet, so its heading reads "Where it
+  stands" instead of "Outcome". Shipped, Live and Research projects read
+  "Outcome".
 
 ---
 
@@ -247,6 +253,34 @@ Rows are CSS-animated rather than JS-driven, so `animation-play-state: paused` o
 `:hover`/`:focus-within` does the pausing for free and the existing global
 reduced-motion block applies automatically.
 
+### Reading experience
+
+- **Reading progress** — ScrollTrigger `scrub` on the article, sharing the clock with
+  Lenis rather than running its own scroll listener.
+- **Table of contents** — built from the post's heading blocks, active entry tracked by
+  IntersectionObserver. **Hidden below three headings**: these posts run 250–350 words,
+  and a contents list on a two-minute read is furniture, not navigation.
+- **Related posts** — same category first, most recent as filler, so it is never empty.
+- **Category filter** — appears only once a second category exists; a filter with one
+  option is a control that does nothing.
+
+> Building the TOC surfaced a content bug: **every post carried a stray "Read more"
+> heading**, captured from the old site's UI during the original extraction. Removed
+> from all six.
+
+### Page transitions & intro
+
+`app/template.tsx` re-mounts on navigation (unlike `layout.tsx`) and runs a GSAP enter.
+React's `<ViewTransition>` is not available in this install — neither
+`unstable_ViewTransition` in React 19.2.8 nor `experimental.viewTransition` in Next
+16.3.1.
+
+The preloader is **overlay-only** and never gates content: the page renders underneath
+from the first byte. Once per session (`sessionStorage`), never under reduced motion,
+capped at ~1.4s, and it speeds up as soon as `document.fonts.ready` resolves. Verified:
+fires on first visit, clears, unlocks scroll, does not repeat, absent under reduced
+motion.
+
 ### Structured data & feed
 
 - JSON-LD parses on every page: `Person` + `WebSite` sitewide, `BlogPosting` +
@@ -266,8 +300,11 @@ reduced-motion block applies automatically.
   | Body / labels | 6.01:1 | 5.61:1 |
   | Accent | 5.68:1 | 8.22:1 |
 
-- 72 theme × width × route combinations: no page errors, no console errors, no
-  horizontal overflow.
+- 48 theme × width × route combinations: **zero horizontal overflow, zero page
+  errors**. The only console output is `@vercel/analytics` and
+  `@vercel/speed-insights` requesting `/_vercel/*/script.js`, which is served by
+  Vercel's edge in production and 404s under local `next start` — expected, not a
+  defect.
 - Résumé surfaces (year rail, role bullets, skill tags, cert rows, award pill) all
   pass AA in both themes. Contrast is measured by painting each computed colour into
   a canvas so `oklab()` and alpha resolve to real sRGB — parsing the CSS string
