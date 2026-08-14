@@ -7,7 +7,8 @@ export const metadata: Metadata = {
 };
 
 /**
- * The session guard lives in `middleware.ts`, which runs before this renders — an
+ * The session guard lives in `proxy.ts` (Next 16's rename of `middleware.ts`),
+ * which runs before this renders — an
  * unauthenticated request is redirected at the edge and never reaches admin code.
  * This layout is only chrome.
  */

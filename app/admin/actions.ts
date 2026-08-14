@@ -1,6 +1,6 @@
 "use server";
 
-import { timingSafeEqual } from "node:crypto";
+import { createHash, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
@@ -12,18 +12,19 @@ import {
 /**
  * Constant-time password comparison.
  *
- * `timingSafeEqual` throws on length mismatch, which would itself leak length, so
- * both sides are hashed to a fixed width first and the digests are compared.
+ * `timingSafeEqual` throws on a length mismatch, and the throw would itself leak
+ * the expected length, so both sides are reduced to a fixed-width SHA-256 digest
+ * first and the digests are compared.
+ *
+ * This previously XOR-folded each side into 32 bytes. That is injective only up
+ * to 32 characters — beyond it, bytes wrap and collide, so two different long
+ * passwords could fold to the same value. SHA-256 costs nothing here and removes
+ * the sharp edge entirely.
  */
 function passwordMatches(supplied: string, expected: string) {
-  const enc = new TextEncoder();
-  const a = new Uint8Array(32);
-  const b = new Uint8Array(32);
-  // Cheap fixed-width fold — the secret never leaves the server and the only
-  // property needed here is that comparison time is independent of the input.
-  enc.encode(supplied).forEach((byte, i) => (a[i % 32] ^= byte));
-  enc.encode(expected).forEach((byte, i) => (b[i % 32] ^= byte));
-  return timingSafeEqual(a, b) && supplied.length === expected.length;
+  const digest = (value: string) =>
+    createHash("sha256").update(value, "utf8").digest();
+  return timingSafeEqual(digest(supplied), digest(expected));
 }
 
 /**
